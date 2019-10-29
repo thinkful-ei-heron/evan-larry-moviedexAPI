@@ -36,6 +36,14 @@ app.get('/movies', (req, res) => {
     results = results
       .filter(app => app.genre.toLowerCase().includes(genre.toLowerCase()));
   }
+  if (country) {
+    results = results
+      .filter(app => app.country.toLowerCase().includes(country.toLowerCase()));
+  }
+  if (avg_vote) {
+    results = results
+      .filter(app => app.avg_vote >= parseFloat(req.query.avg_vote));
+  }
   res
     .json(results);
 });
