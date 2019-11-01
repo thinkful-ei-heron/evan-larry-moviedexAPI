@@ -24,9 +24,23 @@ app.use(function validateBearerToken(req, res, next) {
 
 app.get('/movies', (req, res) => {
   const {genre, country, avg_vote} = req.query;
+  const genres = ['Animation', 'Drama', 
+    'Romantic', 'Comedy', 'Spy', 'Crime', 
+    'Thriller', 'Adventure', 'Documentary', 
+    'Horror', 'Action', 'Western', 'History', 
+    'Biography', 'Musical', 'Fantasy', 'War', 'Grotesque'].map(c => c.toLowerCase());
   let results = Movies;
-  if(genre) {
-    if(!['Animation', 'Drama', 'Romantic', 'Comedy', 'Spy', 'Crime', 'Thriller', 'Adventure', 'Documentary', 'Horror', 'Action', 'Western', 'History', 'Biography', 'Musical', 'Fantasy', 'War', 'Grotesque', 'animation', 'drama', 'romantic', 'comedy', 'spy', 'crime', 'thriller', 'adventure', 'documentary', 'horror', 'action', 'western', 'history', 'biography', 'musical', 'fantasy', 'war', 'grotesque'].includes(genre)) {
+  if (country) {
+    results = results
+      .filter(app => app.country.toLowerCase().includes(country.toLowerCase()));
+    if(results.length === 0) {
+      return res
+        .status(400)
+        .send('Must choose a valid country');
+    }
+  }
+  if (genre) {
+    if(!genres.includes(genre.toLowerCase())) {
       return res
         .status(400)
         .send('Must choose a valid genre type');
@@ -35,10 +49,6 @@ app.get('/movies', (req, res) => {
   if (genre) {
     results = results
       .filter(app => app.genre.toLowerCase().includes(genre.toLowerCase()));
-  }
-  if (country) {
-    results = results
-      .filter(app => app.country.toLowerCase().includes(country.toLowerCase()));
   }
   if (avg_vote) {
     results = results
